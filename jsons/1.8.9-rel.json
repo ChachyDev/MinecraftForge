@@ -55,6 +55,12 @@
       "clientreq":true
     },
     {
+      "name": "com.github.ChachyDev:keventbus-forge:dd8d578136",
+      "url": "https://jitpack.io/",
+      "serverreg": true,
+      "clientreg": true
+    },
+    {
       "name": "lzma:lzma:0.0.1",
       "serverreq":true
     },

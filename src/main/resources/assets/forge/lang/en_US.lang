@@ -61,6 +61,10 @@ forge.configgui.maximumTicketCount=Mod Ticket Limit
 forge.configgui.playerTicketCount.tooltip=The number of tickets a player can be assigned instead of a mod. This is shared across all mods and it is up to the mods to use it.
 forge.configgui.playerTicketCount=Player Ticket Limit
 
+# Experiments
+forge.configgui.ctgy.ExperimentsConfig=Experiments
+forge.configgui.experiments.useKevinsEventBus=Use Kevin's EventBus
+
 fml.config.sample.basicDouble.tooltip=A double property with no defined bounds.
 fml.config.sample.basicDouble=Unbounded Double
 fml.config.sample.basicInteger.tooltip=An integer property with no defined bounds.

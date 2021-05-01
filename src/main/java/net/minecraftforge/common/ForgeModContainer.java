@@ -41,8 +41,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static net.minecraftforge.common.config.Configuration.CATEGORY_CLIENT;
-import static net.minecraftforge.common.config.Configuration.CATEGORY_GENERAL;
+import static net.minecraftforge.common.config.Configuration.*;
 
 public class ForgeModContainer extends DummyModContainer implements WorldAccessContainer {
     public static final String VERSION_CHECK_CAT = "version_checking";
@@ -61,6 +60,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static boolean defaultHasSpawnFuzz = true;
     public static boolean forgeLightPipelineEnabled = true;
     public static boolean replaceVanillaBucketModel = true;
+    public static boolean useKevinsEventBus = false;
 
     private static Configuration config;
     private static ForgeModContainer INSTANCE;
@@ -83,11 +83,11 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         meta.description = "Minecraft Forge is a common open source API allowing a broad range of mods " +
                 "to work cooperatively together. It allows many mods to be created without " +
                 "them editing the main Minecraft code.";
-        meta.url = "http://minecraftforge.net";
+        meta.url = "https://minecraftforge.net";
         meta.screenshots = new String[0];
         meta.logoFile = "/forge_logo.png";
         try {
-            updateJSONUrl = new URL("http://files.minecraftforge.net/maven/net/minecraftforge/forge/promotions_slim.json");
+            updateJSONUrl = new URL("https://files.minecraftforge.net/maven/net/minecraftforge/forge/promotions_slim.json");
         } catch (MalformedURLException e) {
         }
 
@@ -115,7 +115,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     private static void syncConfig(boolean load) {
         // By adding a property order list we are defining the order that the properties will appear both in the config file and on the GUIs.
         // Property order lists are defined per-ConfigCategory.
-        List<String> propOrder = new ArrayList<String>();
+        List<String> propOrder = new ArrayList<>();
 
         if (!config.isChild) {
             if (load) {
@@ -148,6 +148,16 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
             prop.set(64);
         }
         propOrder.add(prop.getName());
+
+        prop = config.get(Configuration.CATEGORY_EXPERIMENTAL, "useKevinsEventBus", false);
+        prop.setLanguageKey("forge.configgui.experiments.useKevinsEventBus").setRequiresMcRestart(true);
+        prop.comment = "Swaps the Forge EventBus for Kevin's EventBus (https://github.com/KevinPriv/keventbus)";
+        useKevinsEventBus = prop.getBoolean(useKevinsEventBus);
+        propOrder.add(prop.getName());
+
+        if (useKevinsEventBus) {
+            FMLLog.info("An experimental feature (useKevinsEventBus) has been enabled, use at your own risk!");
+        }
 
         prop = config.get(CATEGORY_GENERAL, "sortRecipies", true);
         prop.comment = "Set to true to enable the post initialization sorting of crafting recipes using Forge's sorter. May cause desyncing on conflicting recipies. MUST RESTART MINECRAFT IF CHANGED FROM THE CONFIG GUI.";
@@ -245,6 +255,8 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
 
         config.setCategoryPropertyOrder(CATEGORY_CLIENT, propOrder);
 
+        config.setCategoryPropertyOrder(CATEGORY_EXPERIMENTAL, propOrder);
+
         if (config.hasChanged()) {
             config.save();
         }
@@ -263,6 +275,8 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
                 ForgeChunkManager.syncConfigDefaults();
                 ForgeChunkManager.loadConfiguration();
             } else if (VERSION_CHECK_CAT.equals(event.configID)) {
+                syncConfig(false);
+            } else if (CATEGORY_EXPERIMENTAL.equals(event.configID)) {
                 syncConfig(false);
             }
         }

@@ -71,13 +71,23 @@
     },
     {
       "name": "org.scala-lang.modules:scala-swing_2.11:1.0.1",
-      "children" : ["sources"],
-      "url" : "http://repo.maven.apache.org/maven2"
+      "children": [
+        "sources"
+      ],
+      "url": "http://repo.maven.apache.org/maven2"
     },
     {
       "name": "org.scala-lang.modules:scala-xml_2.11:1.0.2",
-      "children" : ["sources"],
-      "url" : "http://repo.maven.apache.org/maven2"
+      "children": [
+        "sources"
+      ],
+      "url": "http://repo.maven.apache.org/maven2"
+    },
+    {
+      "name": "com.github.ChachyDev:keventbus-forge:dd8d578136",
+      "url": "https://jitpack.io/",
+      "serverreg": true,
+      "clientreg": true
     },
     {
       "name": "lzma:lzma:0.0.1"

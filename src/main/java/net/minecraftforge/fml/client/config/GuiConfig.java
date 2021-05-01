@@ -12,14 +12,6 @@
 
 package net.minecraftforge.fml.client.config;
 
-import static net.minecraftforge.fml.client.config.GuiUtils.RESET_CHAR;
-import static net.minecraftforge.fml.client.config.GuiUtils.UNDO_CHAR;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -32,8 +24,15 @@ import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEve
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.PostConfigChangedEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
-
 import org.lwjgl.input.Keyboard;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static net.minecraftforge.fml.client.config.GuiUtils.RESET_CHAR;
+import static net.minecraftforge.fml.client.config.GuiUtils.UNDO_CHAR;
 
 /**
  * This class is the base GuiScreen for all config GUI screens. It can be extended by mods to provide the top-level config screen
@@ -225,20 +224,15 @@ public class GuiConfig extends GuiScreen
     }
 
     @Override
-    protected void actionPerformed(GuiButton button)
-    {
-        if (button.id == 2000)
-        {
+    protected void actionPerformed(GuiButton button) {
+        if (button.id == 2000) {
             boolean flag = true;
-            try
-            {
+            try {
                 if ((configID != null || this.parentScreen == null || !(this.parentScreen instanceof GuiConfig))
-                        && (this.entryList.hasChangedEntry(true)))
-                {
+                        && (this.entryList.hasChangedEntry(true))) {
                     boolean requiresMcRestart = this.entryList.saveConfigElements();
 
-                    if (Loader.isModLoaded(modID))
-                    {
+                    if (Loader.isModLoaded(modID)) {
                         ConfigChangedEvent event = new OnConfigChangedEvent(modID, configID, isWorldRunning, requiresMcRestart);
                         MinecraftForge.EVENT_BUS.post(event);
                         if (!event.getResult().equals(Result.DENY))
