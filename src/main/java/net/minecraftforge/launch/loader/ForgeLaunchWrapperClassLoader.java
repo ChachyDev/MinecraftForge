@@ -1,12 +1,8 @@
 package net.minecraftforge.launch.loader;
 
-import com.google.common.collect.ArrayListMultimap;
 import cpw.mods.gross.Java9ClassLoaderUtil;
 import net.minecraft.launchwrapper.LogWrapper;
-import net.minecraftforge.launch.ForgeLaunchWrapper;
 import net.minecraftforge.launch.loader.transformer.ForgeTransformer;
-import net.minecraftforge.patching.ClassReaderTransformer;
-import net.minecraftforge.patching.MixinServiceLaunchWrapperTransformer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -39,14 +35,8 @@ public class ForgeLaunchWrapperClassLoader extends URLClassLoader {
         addClassLoaderExclusion("java.");
         addClassLoaderExclusion("javax.");
         addClassLoaderExclusion("com.sun.");
-        addClassLoaderExclusion(getClass().getName());
+        addClassLoaderExclusion("net.minecraftforge.launch.");
         addClassLoaderExclusion("org.lwjgl.");
-//        addClassLoaderExclusion("org.objectweb.asm.");
-//        addClassLoaderExclusion(ForgeTransformer.class.getName());
-        addClassLoaderExclusion(ForgeLaunchWrapper.class.getName());
-
-        addTransformer(new MixinServiceLaunchWrapperTransformer());
-        addTransformer(new ClassReaderTransformer());
     }
 
     @Override
@@ -180,5 +170,19 @@ public class ForgeLaunchWrapperClassLoader extends URLClassLoader {
         }
 
         return null;
+    }
+
+    /**
+     * Oh Forge, how you are full of hacks! Even to maintain you, we must hack it together...
+     * This fix was one I didn't really want to make because it's super messy, but here we are
+     * <p>
+     * This classloader needs to apply these patches as early as possible, to do this we must manually load the classes
+     * and then add them as a transformer, so that they are not loaded under the AppClassLoader, causing incompatibilities.
+     */
+    public void addDefaultTransformers() throws Exception {
+        Class<?> mixinServiceLaunchWrapperTransformer = Class.forName("net.minecraftforge.patching.MixinServiceLaunchWrapperTransformer", true, this);
+        Class<?> classReaderTransformer = Class.forName("net.minecraftforge.patching.ClassReaderTransformer", true, this);
+        addTransformer((ForgeTransformer) mixinServiceLaunchWrapperTransformer.newInstance());
+        addTransformer((ForgeTransformer) classReaderTransformer.newInstance());
     }
 }
